@@ -65,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="20dp"
             android:background="@drawable/tvstyle"
             android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
             android:inputType="textPersonName" />
@@ -125,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Context_Text"
-            android:text="連續測重" />
+            android:text="單筆測重" />
 
 
         <Button

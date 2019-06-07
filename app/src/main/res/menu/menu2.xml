@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+    <item
+        android:id="@+id/all"
+        android:icon="@drawable/all"
+        android:title="全選"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/del"
+        android:icon="@drawable/garbage2"
+        android:title="刪除"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/el"
+        android:icon="@drawable/excel"
+        android:title="匯出Excel"
+        app:showAsAction="always" />
+</menu>
