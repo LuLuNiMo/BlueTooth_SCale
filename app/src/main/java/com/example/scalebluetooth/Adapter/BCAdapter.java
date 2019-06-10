@@ -91,7 +91,7 @@ public class BCAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void add(String code, float w) {
+    public void add(String code, String w) {
         Item item = new Item(code, w, getTime());
 
         item.setId(activity.getSharedPreferences("preferences", MODE_PRIVATE).getInt("DBW_No", 0));

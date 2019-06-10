@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean type = false; //true = 單筆 false = 連續
 
 
-
     // Initial setting
 
     @Override
@@ -52,14 +51,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Button) findViewById(R.id.ok)).setOnClickListener(this);
         ((Button) findViewById(R.id.wbtn)).setOnClickListener(this);
         ((Button) findViewById(R.id.output)).setOnClickListener(this);
-       ((Button) findViewById(R.id.del)).setOnClickListener(this);
+        ((Button) findViewById(R.id.del)).setOnClickListener(this);
 
 
-         manager = new BlueToothManagers(this);
-         handler = new Handler();
-         EM = new ExcelManager();
+        manager = new BlueToothManagers(this);
+        handler = new Handler();
+        EM = new ExcelManager();
         adapter = new BCAdapter(this);
-       ((ListView) findViewById(R.id.listview)).setAdapter(adapter);
+        ((ListView) findViewById(R.id.listview)).setAdapter(adapter);
 
     }
 
@@ -72,45 +71,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // main Method
 
-    public void connect_device(){
-         manager.showLIst(name);
+    public void connect_device() {
+        manager.ConnectDevices(name, weigth, state);
     }
 
-    public void dectet_weigth(){
-        if(code.getText().length()== 13){
-            adapter.add(code.getText().toString(),Float.valueOf(weigth.getText().toString().substring(0,
-                    weigth.getText().toString().indexOf('K'))));
-            Toast.makeText(this,"新增成功",Toast.LENGTH_SHORT).show();
-            if(!type){
+    public void dectet_weigth() {
+        if (code.getText().length() == 13) {
+            adapter.add(code.getText().toString(), weigth.getText().toString());
+            Toast.makeText(this, "新增成功", Toast.LENGTH_SHORT).show();
+            if (!type) {
                 code.setText("");
             }
-        }else{
-            Toast.makeText(this,"長度不符",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "長度不符", Toast.LENGTH_SHORT).show();
             code.setText("");
         }
     }
 
 
-
     //BT Permission response
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       if (manager.getBTs()) {
-           connect_device();
-        }else{
-          Toast.makeText(this, "藍芽尚未開啟!", Toast.LENGTH_SHORT).show();
+        if (manager.getBTs()) {
+            connect_device();
+        } else {
+            Toast.makeText(this, "藍芽尚未開啟!", Toast.LENGTH_SHORT).show();
         }
     }
 
     //File Write Perrmission
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-       if(EM.permission(this)){
-           Toast.makeText(this, "尚未開放權限!!", Toast.LENGTH_SHORT).show();
-           finish();
-       }else{
-           EM.ExportExcel(MainActivity.this,adapter.getList());
-       }
+        if (EM.permission(this)) {
+            Toast.makeText(this, "尚未開放權限!!", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            EM.ExportExcel(MainActivity.this, adapter.getList());
+        }
     }
 
     @Override
@@ -127,18 +124,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dectet_weigth();
                 break;
             case R.id.wbtn:
-                if(type){
+                if (type) {
                     ((Button) findViewById(R.id.wbtn)).setText("單筆測重");
-                     type = false;
-                }else{
+                    type = false;
+                } else {
                     ((Button) findViewById(R.id.wbtn)).setText("連續測重");
-                     type = true;
+                    type = true;
                 }
 
                 break;
             case R.id.output:
-                if(EM.permission(MainActivity.this)){EM.Requset_permission(MainActivity.this);}
-                else{ EM.ExportExcel(MainActivity.this,adapter.getList());}
+
+                if (EM.permission(MainActivity.this)) {
+                    EM.Requset_permission(MainActivity.this);
+                } else {
+                    EM.ExportExcel(MainActivity.this, adapter.getList());
+                }
+
                 break;
             case R.id.del:
                 adapter.deleteAll();
@@ -184,14 +186,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-      //  handler.postDelayed(BT_state, 500);
+        handler.postDelayed(BT_state, 500);
 
         switch (id) {
             case R.id.bt:
                 break;
             case R.id.bc:
                 Intent intent = new Intent();
-                intent.setClass(this,barcode_record.class);
+                intent.setClass(this, barcode_record.class);
                 startActivity(intent);
                 break;
         }

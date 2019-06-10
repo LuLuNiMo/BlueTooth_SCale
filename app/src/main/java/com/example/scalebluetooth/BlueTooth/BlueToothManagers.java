@@ -23,14 +23,11 @@ public class BlueToothManagers {
     private BluetoothAdapter adapter;
     private Activity a;
     private DetectScale scale;
-    private ArrayList<BluetoothDevice> devices;
-    private BluetoothLeScanner scanner;
 
     public BlueToothManagers(Activity a){
         this.a = a;
         adapter = BluetoothAdapter.getDefaultAdapter();
         scale = new DetectScale(a);
-        devices = new ArrayList<>();
     }
 
 
@@ -45,6 +42,7 @@ public class BlueToothManagers {
         }
     }
 
+    //顯示先前的裝置
     public ArrayList<String> paireDevice(){
         ArrayList<String> list = new ArrayList<>();
         Set<BluetoothDevice> devices = adapter.getBondedDevices();
@@ -54,8 +52,8 @@ public class BlueToothManagers {
         return list;
     }
 
-    public void showLIst(TextView tv) {
-        scale.dectet_Device(tv);
+    public void ConnectDevices(TextView tv,TextView tv2,TextView tv3) {
+        scale.dectet_Device(tv,tv2,tv3);
     }
 
 

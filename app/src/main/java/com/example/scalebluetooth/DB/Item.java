@@ -3,18 +3,18 @@ package com.example.scalebluetooth.DB;
 public class Item {
     private int id;
     private String barcode;
-    private float weigth;
+    private String weigth;
     private String time;
 
 
-    public Item(int id, String barcode, float weigth, String time) {
+    public Item(int id, String barcode, String weigth, String time) {
         this.id = id;
         this.barcode = barcode;
         this.weigth = weigth;
         this.time = time;
     }
 
-    public Item( String barcode, float weigth, String time) {
+    public Item( String barcode, String weigth, String time) {
         this.barcode = barcode;
         this.weigth = weigth;
         this.time = time;
@@ -44,11 +44,11 @@ public class Item {
         this.barcode = barcode;
     }
 
-    public float getWeigth() {
+    public String getWeigth() {
         return weigth;
     }
 
-    public void setWeigth(float weigth) {
+    public void setWeigth(String weigth) {
         this.weigth = weigth;
     }
 

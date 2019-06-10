@@ -65,7 +65,7 @@ public class SQLite extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(COL_b, item.getBarcode());
-        values.put(COL_w, String.valueOf(item.getWeigth()));
+        values.put(COL_w, item.getWeigth());
         values.put(COL_t, item.getTime());
 
         return db.insert(TABLE_NAME, null, values);
@@ -85,7 +85,7 @@ public class SQLite extends SQLiteOpenHelper {
 
         values.put(COL_ID, item.getId());
         values.put(COL_b, item.getBarcode());
-        values.put(COL_w, String.valueOf(item.getWeigth()));
+        values.put(COL_w, item.getWeigth());
         values.put(COL_t, item.getTime());
 
         String whereClause = COL_ID + " = ?;";
@@ -116,7 +116,7 @@ public class SQLite extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
             String b = cursor.getString(1);
-            Float w = Float.valueOf(cursor.getString(2));
+            String w = cursor.getString(2);
             String t = cursor.getString(3);
             Item data = new Item(id, b, w, t );
             list.add(data);

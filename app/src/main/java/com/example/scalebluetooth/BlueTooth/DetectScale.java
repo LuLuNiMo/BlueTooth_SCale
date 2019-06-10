@@ -3,19 +3,16 @@ package com.example.scalebluetooth.BlueTooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
-import android.icu.text.UnicodeSetSpanner;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.excell_ble_api.Excell_BLE;
-import com.example.scalebluetooth.Adapter.AlterDiagram;
+import com.example.scalebluetooth.AlterDiagram;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static java.lang.Thread.sleep;
@@ -23,12 +20,11 @@ import static java.lang.Thread.sleep;
 public class DetectScale implements Excell_BLE.ListenAPI {
     private Activity activity;
     private Excell_BLE BLE;
-    private String weigth,unit;
-    private boolean pos;
-    private HashMap<String,BluetoothDevice> devices;
-    boolean MG_S=false,MN_S=false,BT_S=false,MZ_S=false,MT_S=false,RT_S=false,RP_S=false,PT_S=false,RB_S=false ;
+    private AlterDiagram diagram;
 
-    TextView tv;
+    private TextView n, w,s;
+    private HashMap<String, BluetoothDevice> devices;
+    boolean MG_S = false, MN_S = false, BT_S = false, MZ_S = false, MT_S = false, RT_S = false, RP_S = false, PT_S = false, RB_S = false;
 
     public DetectScale(Activity a) {
         this.activity = a;
@@ -38,89 +34,21 @@ public class DetectScale implements Excell_BLE.ListenAPI {
     }
 
 
-    public void dectet_Device(TextView tv){
+    public void dectet_Device(TextView n, TextView w,TextView s) {
+        diagram = new AlterDiagram(activity);
         BLE.Setup_Scale("General");
         BLE.Start_Scan();
-        this.tv = tv;
+        this.n = n;
+        this.w = w;
+        this.s = s;
 
-        final AlterDiagram diagram = new AlterDiagram();  //欠卻：動態更新
-        String str = "";
-        for(String id:devices.keySet()){
-            str += id +  ";";
-        }
-        String[] strs = str.split(";");
-        diagram.showDialog(activity,"藍芽裝置" ,strs,BLE,devices);
-
+        handler.postDelayed(showDargramThread,1000);
     }
-
-    public void set(){
-        BLE.SetZero();
-
-        BLE.Disconnect_Device();
-        BLE.Get_Function_API();
-
-        if(MG_S)
-            BLE.SetGrossDisplay();
-        if(MN_S)
-            BLE.SetNetDisplay() ;
-        if(MZ_S)
-            BLE.SetZero();
-        if(MT_S)
-            BLE.SetTare();
-        if(RT_S)
-            BLE.GetTare_API();
-        if(BT_S)
-            BLE.SetBLEFormat();
-        if(PT_S)
-            BLE.SetPreTare("1000");
-        if(RP_S)
-            BLE.GetPreTare_API();
-        if(RB_S)
-            BLE.GetBattery_API();
-
-        BLE.SetHold();
-        char[] wbuf = new char[8];
-        wbuf[0] = 'E';
-        wbuf[1] = 'X';
-        wbuf[2] = 'C';
-        wbuf[3] = 'E';
-        wbuf[4] = 'L';
-        wbuf[5] = 'L';
-        wbuf[6] = 'G';
-        wbuf[7] = 'W';
-        BLE.SetBLE_DeviceName(wbuf); ;
-        BLE.GetScaleVersion_API();
-
-        //Set High  range value . example 0003.00
-        wbuf = new char[6];
-        wbuf[0] =0x30 ;
-        wbuf[1] = 0x30 ;
-        wbuf[2] = 0x30 ;
-        wbuf[3] = 0x33 ;
-        wbuf[4] = 0x30 ;
-        wbuf[5] = 0x30 ;
-        //unit : 00 -05 ,  HL : High true Low false , Value
-        BLE.SetHighLow(0  , true  , wbuf) ;
-        //delay
-        SystemClock.sleep(500);
-        //Set Low  range value . example 0002.00
-        wbuf[0] = 0x30 ;
-        wbuf[1] =  0x30 ;
-        wbuf[2] =  0x30 ;
-        wbuf[3] =  0x32 ;
-        wbuf[4] =  0x30 ;
-        wbuf[5] =  0x30 ;
-        //unit : 00 ,  HL : High true Low false , Value
-        BLE.SetHighLow(0  , false  , wbuf) ;
-    }
-
-
 
     //連線該裝置
     @Override
     public void OnScan_Result(BluetoothDevice arg0) {
-        Log.d("Devices--",arg0.getName() + " Address:" +arg0.getAddress());
-        devices.put(arg0.getAddress(),arg0);
+        devices.put(arg0.getAddress(), arg0);
     }
 
 
@@ -128,11 +56,65 @@ public class DetectScale implements Excell_BLE.ListenAPI {
     @Override
     public void OnWeight_Update(boolean arg0, String arg1, Short arg2, boolean arg3,
                                 boolean arg4, boolean arg5, boolean arg6, boolean arg7, boolean arg8, short arg9, String arg10, short arg11) {
-        weigth = arg10;
-        unit = arg1;
-        pos = arg0;
-        handler.sendEmptyMessage(Integer.valueOf(weigth));
+        if(arg0){
+            w.setText(arg10 + " " +arg1);
+        }else{
+            w.setText("-" +arg10 + " " +arg1);
+        }
     }
+
+    Runnable showDargramThread = new Runnable() {
+        public void run() {
+            handler.postDelayed(this, 1000);
+            try {
+                String str = "";
+                for (String id : devices.keySet()) {
+                    str += id + ";";
+                }
+
+                if (!str.equals("")) {
+                    String[] strs = str.split(";");
+                    diagram.showDialog("藍芽裝置",BLE, n,devices);
+                }
+            } catch (Exception e) {
+                Log.e("Handler error", "Handler error  " + e.getMessage());
+            }
+        }
+    };
+
+
+    //裝置連線狀態
+    @Override
+    public void OnConn_State(int i) {
+        handler.sendEmptyMessage(i);
+    }
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            try {
+                switch (msg.what){
+                    case 0:
+                        s.setText("已離線");
+                        s.setTextColor(Color.RED);
+                        n.setText("連線裝置");
+                        Log.i("Scale State--", "BLE Scale Disconnect");
+                        break;
+                    case 1:
+                        s.setText("連線中");
+                        s.setTextColor(Color.GREEN);
+                        Log.i("Scale State--", "BLE Scale is Connecting");
+                        break;
+                    case 2:
+                        s.setText("已連線");
+                        s.setTextColor(Color.BLUE);
+                        Log.i("Scale State--", "BLE Scale is Connected");
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e("Handler--Exception", e.getMessage());
+            }}
+    };
+
 
     /*
      * 	(boolean) arg0 : Weight sign symbol , + are false , - are  true .
@@ -150,61 +132,88 @@ public class DetectScale implements Excell_BLE.ListenAPI {
      */
 
 
-    //裝置連線狀態
-    @Override
-    public void OnConn_State(int i) {
-        switch (i){
-            case 0:
-                Log.e("Scale State--", "BLE Scale Disconnect") ;
-                handler.sendEmptyMessage(0);
-                break;
-            case 1:
-                Log.e("Scale State--", "BLE Scale is Connecting") ;
-                handler.sendEmptyMessage(1);
-                break;
-            case 2:
-                Log.e("Scale State--", "BLE Scale is Connected") ;
-                handler.sendEmptyMessage(2);
-                set();
-                break;
-        }
-    }
-
-
-    protected Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            try {
-
-                tv.setText(tv.getText().toString() + String.valueOf(msg.what));
-            } catch (Exception e) {
-                Log.e("Handler error", "Handler error  " + e.getMessage());
-            }
-
-        }
-    };
-
-
-
-
     @Override
     public void OnGetTareValue(String s) {
-        Log.e("GetTareValue--", "TareValue Value  : " + s + "\n") ;
+        Log.d("GetTareValue--", "TareValue Value  : " + s + "\n");
     }
 
     @Override
     public void OnGetPreTareValue(String s) {
-        Log.e("PreTareValue--", "PreTare Value  : " + s + "\n");
+        Log.d("PreTareValue--", "PreTare Value  : " + s + "\n");
     }
 
     @Override
     public void OnGetVersionValue(String s) {
-        Log.e("VersionValue--", "Version Value  : " + s + "\n") ;
+        Log.d("VersionValue--", "Version Value  : " + s + "\n");
     }
 
     @Override
     public void OnGetBatteryValue(String s) {
-        Log.e("tBatteryValue--", "tBattery Value  : " + s + "\n") ;
+        Log.d("tBatteryValue--", "tBattery Value  : " + s + "\n");
     }
+
+    public void set() {
+        BLE.SetZero();
+
+        BLE.Disconnect_Device();
+        BLE.Get_Function_API();
+
+        if (MG_S)
+            BLE.SetGrossDisplay();
+        if (MN_S)
+            BLE.SetNetDisplay();
+        if (MZ_S)
+            BLE.SetZero();
+        if (MT_S)
+            BLE.SetTare();
+        if (RT_S)
+            BLE.GetTare_API();
+        if (BT_S)
+            BLE.SetBLEFormat();
+        if (PT_S)
+            BLE.SetPreTare("1000");
+        if (RP_S)
+            BLE.GetPreTare_API();
+        if (RB_S)
+            BLE.GetBattery_API();
+
+        BLE.SetHold();
+        char[] wbuf = new char[8];
+        wbuf[0] = 'E';
+        wbuf[1] = 'X';
+        wbuf[2] = 'C';
+        wbuf[3] = 'E';
+        wbuf[4] = 'L';
+        wbuf[5] = 'L';
+        wbuf[6] = 'G';
+        wbuf[7] = 'W';
+        BLE.SetBLE_DeviceName(wbuf);
+        ;
+        BLE.GetScaleVersion_API();
+
+        //Set High  range value . example 0003.00
+        wbuf = new char[6];
+        wbuf[0] = 0x30;
+        wbuf[1] = 0x30;
+        wbuf[2] = 0x30;
+        wbuf[3] = 0x33;
+        wbuf[4] = 0x30;
+        wbuf[5] = 0x30;
+        //unit : 00 -05 ,  HL : High true Low false , Value
+        BLE.SetHighLow(0, true, wbuf);
+        //delay
+        SystemClock.sleep(500);
+        //Set Low  range value . example 0002.00
+        wbuf[0] = 0x30;
+        wbuf[1] = 0x30;
+        wbuf[2] = 0x30;
+        wbuf[3] = 0x32;
+        wbuf[4] = 0x30;
+        wbuf[5] = 0x30;
+        //unit : 00 ,  HL : High true Low false , Value
+        BLE.SetHighLow(0, false, wbuf);
+    }
+
 
 
     /*
@@ -238,6 +247,6 @@ public class DetectScale implements Excell_BLE.ListenAPI {
 
     @Override
     public void OnGetErrorMsg(String s) {
-        Log.e("ErrorMsg--","OnGetErrorMsg : " + s + "\n") ;
+        Log.e("ErrorMsg--", "OnGetErrorMsg : " + s + "\n");
     }
 }

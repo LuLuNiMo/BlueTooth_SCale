@@ -1,6 +1,7 @@
 package com.example.scalebluetooth.File;
 
 import android.content.Context;
+import android.icu.util.LocaleData;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -148,23 +149,28 @@ public class ExcelFormat {
 
                 in.close();
                 writebook.close();
+                Log.i("Excel Output ","----SUCCESS!!");
                 Toast.makeText(c, "匯出EXCEL成功", Toast.LENGTH_SHORT).show();
-
 
             } catch (FileNotFoundException e) {
                 Log.e("FileNotFoundException--", e.getMessage());
+                Toast.makeText(c, "匯出EXCEL失敗", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             } catch (IOException e) {
                 Log.e("IOException--", e.getMessage());
                 e.printStackTrace();
+                Toast.makeText(c, "匯出EXCEL失敗", Toast.LENGTH_SHORT).show();
             } catch (BiffException e) {
                 Log.e("BiffException--", e.getMessage());
                 e.printStackTrace();
+                Toast.makeText(c, "匯出EXCEL失敗", Toast.LENGTH_SHORT).show();
             } catch (RowsExceededException e) {
                 Log.e("RowsExceededException--", e.getMessage());
+                Toast.makeText(c, "匯出EXCEL失敗", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             } catch (WriteException e) {
                 Log.e("WriteException--", e.getMessage());
+                Toast.makeText(c, "匯出EXCEL失敗", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
