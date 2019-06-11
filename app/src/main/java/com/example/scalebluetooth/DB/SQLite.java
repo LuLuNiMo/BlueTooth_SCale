@@ -10,7 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -57,6 +59,27 @@ public class SQLite extends SQLiteOpenHelper {
 
     public static int getNo(Activity a){
         return a.getSharedPreferences("preferences", MODE_PRIVATE).getInt("DBW_No", 0);
+    }
+
+
+    //條碼保存期限：7天
+    public void AutoDelData(){
+        ArrayList<Item> list = (ArrayList<Item>) select(null,null);
+        java.util.Date date = new Date();
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
+        long today_day = Long.valueOf(sdFormat.format(date).substring(8, 10)) +
+                Long.valueOf(sdFormat.format(date).substring(5, 7))*30;
+
+        if(list.size() > 0 && list != null){
+            for (Item item : list) {
+                long this_day = Long.valueOf(item.getTime().substring(8, 10)) +
+                        Long.valueOf(item.getTime().substring(5, 7))*30;
+                if(today_day - this_day > 7){
+                    delete(String.valueOf(item.getId()),COL_ID);
+                    Log.i("Delete-AutoDATA","---SUCCESS");
+                }
+            }
+        }
     }
 
 

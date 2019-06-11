@@ -1,6 +1,9 @@
 package com.example.scalebluetooth;
 
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +21,10 @@ import com.example.scalebluetooth.Adapter.BCAdapter;
 import com.example.scalebluetooth.BlueTooth.BlueToothManagers;
 import com.example.scalebluetooth.BlueTooth.DetectScale;
 import com.example.scalebluetooth.File.ExcelManager;
+
+import org.apache.poi.hssf.record.formula.functions.T;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView name, weigth, state;
@@ -138,15 +145,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (EM.permission(MainActivity.this)) {
                     EM.Requset_permission(MainActivity.this);
                 } else {
-                    EM.ExportExcel(MainActivity.this, adapter.getList());
+                    if(adapter.getList().isEmpty() || adapter.getList().size() < 1){
+                        Toast.makeText(this,"無資料", Toast.LENGTH_SHORT).show();
+                    }else{
+                        EM.ExportExcel(MainActivity.this, adapter.getList());
+                        new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
+                    }
                 }
 
                 break;
             case R.id.del:
-                adapter.deleteAll();
+              adapter.deleteAll();
                 break;
         }
     }
+
+    //根據副檔名取得相對應mmr TYPE
+    private static String getMimeType(String filePath) {
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        String mime = "*/*";
+
+        if (filePath != null) {
+            try {
+                mmr.setDataSource(filePath);
+                mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                return mime;
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                return mime;
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                return mime;
+            }
+        }
+        return mime;
+    }
+
+
+
+
+
 
 
     //Dectet BLUETOOTH state

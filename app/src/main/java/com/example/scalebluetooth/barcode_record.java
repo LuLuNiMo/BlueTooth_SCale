@@ -29,9 +29,13 @@ public class barcode_record extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode_record);
         setTitle("紀錄");
+        SQLite.getInstance(this).AutoDelData();
+
         initSet();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
+
+
 
 
 
@@ -98,7 +102,13 @@ public class barcode_record extends AppCompatActivity {
                 }
                 break;
             case R.id.el:
-                new ExcelManager().ExportExcel(this,adapter.getItems());
+                if(adapter.getItems().size() < 1 || adapter.getItems().isEmpty()){
+                    Toast.makeText(this,"無資料",Toast.LENGTH_SHORT).show();
+                }else{
+                    new ExcelManager().ExportExcel(this,adapter.getItems());
+                    new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
+                }
+
                 break;
             case R.id.all:
                 if(adapter.getItemscount() < adapter.getCount()){

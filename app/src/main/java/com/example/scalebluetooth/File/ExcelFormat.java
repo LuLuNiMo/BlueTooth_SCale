@@ -150,7 +150,6 @@ public class ExcelFormat {
                 in.close();
                 writebook.close();
                 Log.i("Excel Output ","----SUCCESS!!");
-                Toast.makeText(c, "匯出EXCEL成功", Toast.LENGTH_SHORT).show();
 
             } catch (FileNotFoundException e) {
                 Log.e("FileNotFoundException--", e.getMessage());
