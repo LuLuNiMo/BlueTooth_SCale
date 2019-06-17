@@ -98,8 +98,6 @@ public class BCAdapter extends BaseAdapter {
         activity.getSharedPreferences("preferences", MODE_PRIVATE).edit().putInt("DBW_No",
                 activity.getSharedPreferences("preferences", MODE_PRIVATE).getInt("DBW_No", 0)+1).apply();
 
-        Log.e("2222---",String.valueOf(item.getId()));
-
 
         list.add(item);
         SQLite.getInstance(activity).insert(item);

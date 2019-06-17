@@ -67,15 +67,7 @@ public class DetectScale implements Excell_BLE.ListenAPI {
         public void run() {
             handler.postDelayed(this, 1000);
             try {
-                String str = "";
-                for (String id : devices.keySet()) {
-                    str += id + ";";
-                }
-
-                if (!str.equals("")) {
-                    String[] strs = str.split(";");
-                    diagram.showDialog("藍芽裝置",BLE, n,devices);
-                }
+                diagram.showDialog("藍芽裝置",BLE, n,devices);
             } catch (Exception e) {
                 Log.e("Handler error", "Handler error  " + e.getMessage());
             }

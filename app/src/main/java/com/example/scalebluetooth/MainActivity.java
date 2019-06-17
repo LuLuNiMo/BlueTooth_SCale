@@ -1,10 +1,12 @@
 package com.example.scalebluetooth;
 
+import android.Manifest;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -99,29 +101,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //BT Permission response
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (manager.getBTs()) {
+        if (manager.getBTs() && manager.getLocalR()) {
             connect_device();
         } else {
-            Toast.makeText(this, "藍芽尚未開啟!", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
         }
     }
 
-    //File Write Perrmission
+
+
+
+    //File Write and location Perrmission
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (EM.permission(this)) {
-            Toast.makeText(this, "尚未開放權限!!", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            EM.ExportExcel(MainActivity.this, adapter.getList());
+
+        switch (requestCode){
+            case 0:
+                if (manager.getBTs() && manager.getLocalR()) {
+                    connect_device();
+                } else {
+                    Toast.makeText(this,"尚未開放藍芽權限",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case 1:
+                if (EM.permission(this)) {
+                    Toast.makeText(this, "尚未開放權限!!", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    EM.ExportExcel(MainActivity.this, adapter.getList());
+                }
+                break;
         }
+
+
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.c_dev:
-                if (manager.getBTs()) {
+                if (manager.getBTs() && manager.getLocalR()) {
                     connect_device();
                 } else {
                     manager.Request();
