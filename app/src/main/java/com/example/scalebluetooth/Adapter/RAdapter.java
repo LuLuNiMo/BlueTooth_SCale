@@ -158,8 +158,10 @@ public class RAdapter extends BCAdapter {
             SQLite.getInstance(activity).delete(String.valueOf(id),"ID");
         }
         items.clear();
-        ((barcode_record) activity).setSelectItme(items.size());
         this.notifyDataSetChanged();
+        ((barcode_record) activity).setSelectItme(items.size());
+        ((barcode_record) activity).setAllItme();
+
     }
 
 

@@ -30,6 +30,7 @@ public class SQLite extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(CreateSQL);
+            db.execSQL(CreateSQL2);
         } catch (SQLiteConstraintException ex) {
             ex.printStackTrace();
             Log.v("DB create fail.", Log.getStackTraceString(ex));
@@ -43,6 +44,7 @@ public class SQLite extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             db.execSQL("DROP TABLE IF EXISTS  " + TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS  " + TABLE_NAME2);
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.v("DB Upgrade fail.", Log.getStackTraceString(ex));
@@ -62,7 +64,7 @@ public class SQLite extends SQLiteOpenHelper {
     }
 
 
-    //條碼保存期限：7天
+    //條碼保存期限：3天
     public void AutoDelData(){
         ArrayList<Item> list = (ArrayList<Item>) select(null,null);
         java.util.Date date = new Date();
@@ -74,7 +76,7 @@ public class SQLite extends SQLiteOpenHelper {
             for (Item item : list) {
                 long this_day = Long.valueOf(item.getTime().substring(8, 10)) +
                         Long.valueOf(item.getTime().substring(5, 7))*30;
-                if(today_day - this_day > 7){
+                if(today_day - this_day > 3){
                     delete(String.valueOf(item.getId()),COL_ID);
                     Log.i("Delete-AutoDATA","---SUCCESS");
                 }
@@ -148,15 +150,78 @@ public class SQLite extends SQLiteOpenHelper {
         return list;
     }
 
+//----------------------------------------------------------------------------------------------
+
+
+    public long insert(Device item) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        if(item.getName().equals("")){
+            item.setName("未命名裝置");
+        }
+
+        values.put(COL_n, item.getName());
+        values.put(COL_addr, item.getAddr());
+
+        return db.insert(TABLE_NAME2, null, values);
+    }
+
+    public void deleteR(String str, String col) {
+        SQLiteDatabase db = getWritableDatabase();
+        String whereClause = col + " = ?;";
+        String[] whereArgs = {str};
+        db.delete(TABLE_NAME2, whereClause, whereArgs);
+    }
+
+
+    public List<Device> selectR(String select, String values){
+        List<Device> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {
+                COL_ID, COL_n, COL_addr
+        };
+        Cursor cursor;
+
+
+        if(select != null){
+            select += " = ?;";
+            String[] selectionArgs = new String[]{values};
+            cursor = db.query(TABLE_NAME2, columns, select, selectionArgs, null, null,
+                    null);
+        }else{
+            cursor = db.query(TABLE_NAME2, columns, null, null, null, null,
+                    null);
+        }
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String n = cursor.getString(1);
+            String addr = cursor.getString(2);
+
+            list.add(new Device(n,addr,null,false));
+        }
+        cursor.close();
+        return list;
+    }
+
+
+//----------------------------------------------------------------------------------------------
 
 
     private static final String DB_NAME = "KS_Scale_DB";
+
+
     private static final int DB_VERSION = 1;
-    private static final String TABLE_NAME = "BarCore";
+    private static final String TABLE_NAME = "BarCode";
     private static final String COL_ID = "ID";
     private static final String COL_b = "Barcode";
     private static final String COL_t = "Time";
     private static final String COL_w = "Weigth";
+
+    private static final String TABLE_NAME2 = "BTRecord";
+    private static final String COL_n = "Name";
+    private static final String COL_addr = "Address";
 
 
     private static String CreateSQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ( "
@@ -164,5 +229,10 @@ public class SQLite extends SQLiteOpenHelper {
             + COL_b + " TEXT,"
             + COL_w + " TEXT,"
             + COL_t + " TEXT);";
+
+    private static String CreateSQL2 = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " ( "
+            + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COL_n + " TEXT,"
+            + COL_addr + " TEXT);";
 
 }

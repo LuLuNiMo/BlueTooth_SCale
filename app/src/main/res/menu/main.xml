@@ -3,11 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.gallery.MainActivity">
+
     <item
         android:id="@+id/bt"
         android:title="藍芽狀態"
         android:icon="@android:drawable/stat_sys_data_bluetooth"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/btC"
+        android:title="藍芽設定"
+        android:icon="@drawable/bt_icon_set"
+        app:showAsAction="always"
+        />
+
+
+
 
     <item
         android:id="@+id/bc"

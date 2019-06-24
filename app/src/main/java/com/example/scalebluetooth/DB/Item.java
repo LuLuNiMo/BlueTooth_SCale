@@ -1,6 +1,8 @@
 package com.example.scalebluetooth.DB;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable {
     private int id;
     private String barcode;
     private String weigth;

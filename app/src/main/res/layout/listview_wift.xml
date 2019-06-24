@@ -1,31 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/bt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/name"
-            style="@style/Context_Text"
+        <Button
+            android:id="@+id/state"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/ischecked"
+            android:text="" />
+
+        <LinearLayout
+            android:id="@+id/bt"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/Context_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/address"
+                style="@style/Context_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView" />
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+            android:layout_weight="0"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/address"
-            style="@style/Context_Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+
+            <Button
+                android:id="@+id/del"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="0"
+                android:background="@drawable/garbage"
+                android:visibility="invisible" />
+
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="連接裝置" />
+
+
+        </LinearLayout>
     </LinearLayout>
+
+
 </LinearLayout>

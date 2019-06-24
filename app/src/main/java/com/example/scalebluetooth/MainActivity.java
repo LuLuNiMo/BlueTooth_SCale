@@ -3,12 +3,11 @@ package com.example.scalebluetooth;
 import android.Manifest;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.scalebluetooth.Adapter.BCAdapter;
+import com.example.scalebluetooth.BlueTooth.AlterDiagram;
 import com.example.scalebluetooth.BlueTooth.BlueToothManagers;
-import com.example.scalebluetooth.BlueTooth.DetectScale;
+import com.example.scalebluetooth.DB.Device;
+import com.example.scalebluetooth.DB.SQLite;
 import com.example.scalebluetooth.File.ExcelManager;
-
-import org.apache.poi.hssf.record.formula.functions.T;
-
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView name, weigth, state;
@@ -36,7 +33,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ExcelManager EM;
     private Handler handler;
     private MenuItem m;
+    private Device device;
     private boolean type = false; //true = 單筆 false = 連續
+    private boolean isBT = false;
 
 
     // Initial setting
@@ -68,12 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EM = new ExcelManager();
         adapter = new BCAdapter(this);
         ((ListView) findViewById(R.id.listview)).setAdapter(adapter);
-
+        device = (Device) (getIntent().getSerializableExtra("device"));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if (manager.getBTs() && manager.getLocalR()) {
+            isBT = true;}
         handler.postDelayed(BT_state, 1000);
     }
 
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // main Method
 
     public void connect_device() {
-        manager.ConnectDevices(name, weigth, state);
+        manager.ConnectDevices(name, state,weigth,device);
     }
 
     public void dectet_weigth() {
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (manager.getBTs() && manager.getLocalR()) {
-            connect_device();
+            isBT = true;
         } else {
             ActivityCompat.requestPermissions(
                     this,
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode){
             case 0:
                 if (manager.getBTs() && manager.getLocalR()) {
-                    connect_device();
+                    isBT = true;
                 } else {
                     Toast.makeText(this,"尚未開放藍芽權限",Toast.LENGTH_SHORT).show();
                 }
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 } else {
                     EM.ExportExcel(MainActivity.this, adapter.getList());
+                    new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
                 }
                 break;
         }
@@ -144,7 +146,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.c_dev:
                 if (manager.getBTs() && manager.getLocalR()) {
-                    connect_device();
+                    if(SQLite.getInstance(this).selectR(null,null).isEmpty()){
+                        Toast.makeText(this,"尚未設定藍芽",Toast.LENGTH_SHORT).show();
+                    }else{
+                        connect_device();
+                    }
                 } else {
                     manager.Request();
                 }
@@ -177,38 +183,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.del:
-              adapter.deleteAll();
+                adapter.deleteAll();
                 break;
         }
     }
-
-    //根據副檔名取得相對應mmr TYPE
-    private static String getMimeType(String filePath) {
-        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        String mime = "*/*";
-
-        if (filePath != null) {
-            try {
-                mmr.setDataSource(filePath);
-                mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-                return mime;
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                return mime;
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-                return mime;
-            }
-        }
-        return mime;
-    }
-
-
-
-
-
 
 
     //Dectet BLUETOOTH state
@@ -249,18 +227,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
         handler.postDelayed(BT_state, 500);
+        Intent intent = new Intent();
 
         switch (id) {
             case R.id.bt:
                 break;
             case R.id.bc:
-                Intent intent = new Intent();
                 intent.setClass(this, barcode_record.class);
                 startActivity(intent);
+                finish();
+                break;
+            case R.id.btC:
+                if(isBT){
+                    manager.close();
+                    intent.setClass(this, BlueToothSetActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    manager.Request();
+                }
+
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        try{
+            manager.close();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
 }
