@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE"
     android:orientation="vertical"
-    android:layout_margin="5dp"
+    style="@style/LinearLayout_Style"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_margin="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -26,12 +26,14 @@
 
         <Button
             android:id="@+id/c_dev"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:textSize="14dp"
             style="@style/Context_Text"
-            android:text="連接裝置" />
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+
+            android:layout_weight="0"
+            android:background="@drawable/btnstyle"
+            android:text="連接裝置"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/dev_s"
@@ -40,6 +42,7 @@
             android:layout_weight="0"
             style="@style/Context_Text"
             android:textSize="14dp"
+            android:layout_margin="3dp"
             android:textAlignment="center"
             android:text="連線狀態" />
 
@@ -50,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_margin="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -67,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="20dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/tvstyle"
             android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
             android:inputType="textPersonName" />
@@ -74,11 +79,12 @@
         <Button
             android:id="@+id/ok"
             style="@style/Context_Text"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="35dp"
             android:layout_weight="0"
+            android:background="@drawable/btnstyle"
             android:text="OK"
-            android:textSize="12dp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 
@@ -97,6 +103,7 @@
             style="@style/Title_Text"
             android:gravity="center"
             android:background="@drawable/tvstyle"
+            android:textColor="#000000"
             android:textSize="50dp"
             android:text="0.00Kg" />
     </LinearLayout>
@@ -111,6 +118,7 @@
 
         <ListView
             android:id="@+id/listview"
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -124,26 +132,30 @@
 
         <Button
             android:id="@+id/wbtn"
+            style="@style/btn_Text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Context_Text"
+            android:layout_height="35dp"
+            android:background="@drawable/btnstyle"
             android:text="單筆測重" />
 
 
         <Button
             android:id="@+id/output"
+            style="@style/btn_Text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
 
-            style="@style/Context_Text"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/btnstyle"
             android:text="匯出" />
 
         <Button
             android:id="@+id/del"
+            style="@style/btn_Text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
 
-            style="@style/Context_Text"
+            android:layout_height="35dp"
+            android:background="@drawable/btnstyle"
             android:text="全刪" />
     </LinearLayout>
 </LinearLayout>

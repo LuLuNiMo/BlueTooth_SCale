@@ -11,6 +11,7 @@ public class Device  implements Serializable {
     private boolean State;
 
     public Device() {
+        addr = "";
     }
 
     public Device(String name, String addr, BluetoothDevice device,boolean State) {

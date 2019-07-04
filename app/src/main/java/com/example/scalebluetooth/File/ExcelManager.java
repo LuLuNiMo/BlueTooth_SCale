@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ExcelManager {
     private static String[] title = {"編號", "條碼", "重量", "時間"};
-    private String fileName = "英展磅秤條碼資料.xls";
+    private String fileName = "Excell_Barcode.xls";
     private ExcelFormat excelFormat;
 
 

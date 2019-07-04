@@ -5,11 +5,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.scalebluetooth.BuildConfig;
+import com.example.scalebluetooth.MainActivity;
+import com.example.scalebluetooth.R;
+
 import java.io.File;
+import java.sql.Statement;
 
 
 public class AlterDiagram {
@@ -37,13 +45,22 @@ public class AlterDiagram {
                             Intent intent =
                                     new Intent(Intent.ACTION_SEND);
                             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() +
-                                    "/" + "英展磅秤條碼資料.xls");
-                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                    "/" + "Excell_Barcode.xls");
+
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            intent.setType(getMimeType(file.getAbsolutePath()));
 
-                            a.startActivity(Intent.createChooser(intent, "分享至...."));
+                            if(Build.VERSION.SDK_INT >= 26){ //android 8.0
+                                Uri contentUri = FileProvider.getUriForFile(a, BuildConfig.APPLICATION_ID + ".fileProvider", file);
+                                intent.setDataAndType(contentUri, "application/octet-stream");
+                                intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                            }else{
+                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                intent.setType(getMimeType(file.getAbsolutePath()));
+                            }
+
+                            a.startActivity(Intent.createChooser(intent, "分享至..."));
+
                             break;
                     }
                 }
@@ -59,13 +76,15 @@ public class AlterDiagram {
         }
 
 
-    private String getMimeType(String filePath) {
+    private String getMimeType(String filePath) { //分享APP Type
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         String mime = "*/*";
+
         if (filePath != null) {
             try {
                 mmr.setDataSource(filePath);
                 mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
+
             } catch (IllegalStateException e) {
                 return mime;
             } catch (IllegalArgumentException e) {
@@ -74,8 +93,35 @@ public class AlterDiagram {
                 return mime;
             }
         }
+
         return mime;
     }
+
+
+    public void showDialog(String aTitle,String context,String t1,String t2,DialogInterface.OnClickListener blistener){
+        builder.setTitle(aTitle);
+        builder.setMessage(context);
+        builder.setIcon(R.drawable.msg_icon);
+        builder.setCancelable(false);
+
+        builder.setPositiveButton(t1,blistener);
+        builder.setNegativeButton(t2, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent();
+                intent.setClass(a, MainActivity.class);
+                a.startActivity(intent);
+                a.finish();
+            }});
+        dialog = builder.create();
+        dialog.show();
+    }
+
+
+
+
+
 
 
 }

@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:orientation="vertical"
+    style="@style/LinearLayout_Style"
     tools:context=".barcode_record">
 
     <LinearLayout
@@ -36,10 +35,11 @@
         <Button
             android:id="@+id/btn"
             style="@style/Widget.AppCompat.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_width="71dp"
+            android:layout_height="36dp"
+            android:layout_margin="8dp"
             android:layout_weight="0"
+            android:background="@drawable/btnstyle"
             android:text="搜尋" />
     </LinearLayout>
 
@@ -47,6 +47,7 @@
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_weight="1"
+        android:layout_margin="7dp"
         android:layout_height="wrap_content" />
 
 

@@ -79,6 +79,7 @@ public class RAdapter extends BCAdapter {
         });
 
 
+        //單筆選擇修改狀態改變--修改狀態
         if (map.get(item.getId()) == null) {
             code.setFocusableInTouchMode(false);
             code.setFocusable(false);
@@ -92,12 +93,12 @@ public class RAdapter extends BCAdapter {
             btn.setBackground(activity.getDrawable(R.drawable.edit2));
         }
 
-
+         //單筆選擇狀態改變--按一下
         if (items.get(item.getId()) == null) {
             code.setTextColor(Color.BLACK);
-            all.setBackgroundColor(Color.WHITE);
+            all.setBackgroundColor(activity.getResources().getColor(R.color.linearBG));
         } else {
-            code.setTextColor(Color.parseColor("#2D4FFF"));
+            code.setTextColor(Color.parseColor("#055E88"));
             all.setBackgroundColor(Color.parseColor("#87CDEC"));
         }
 
@@ -177,27 +178,4 @@ public class RAdapter extends BCAdapter {
         this.notifyDataSetChanged();
     }
 
-
-
-
 }
-  /*if(!code.getText().toString().equals(item.getBarcode())){
-            }*/
-
-
-/*
-       if(map.get(item.getId()) != null){
-           if(map.get(item.getId())){
-               code.setFocusableInTouchMode(true);
-               code.setFocusable(true);
-               code.requestFocus();
-               code.setBackground(activity.getDrawable(R.drawable.tvstyle));
-               btn.setBackground(activity.getDrawable(R.drawable.edit2));
-           }else{
-               code.setFocusableInTouchMode(false);
-               code.setFocusable(false);
-               code.setBackground(activity.getDrawable(R.drawable.empty));
-               btn.setBackground(activity.getDrawable(R.drawable.edit));
-           }
-
-       }*/

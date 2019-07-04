@@ -2,24 +2,16 @@ package com.example.scalebluetooth.Adapter;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
-import android.content.SharedPreferences;
+
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.excell_ble_api.Excell_BLE;
 import com.example.scalebluetooth.DB.Device;
 import com.example.scalebluetooth.DB.SQLite;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
-import static android.content.Context.MODE_PRIVATE;
 
 public class BTRAdapter extends BTbaseAdapter {
 
@@ -109,20 +101,19 @@ public class BTRAdapter extends BTbaseAdapter {
                         break;
                 }
             } catch (Exception e) {
-                Log.e("Handler--Exception", e.getMessage());
+                Log.e("HandlerBTR--Exception", e.getMessage());
             }
         }
     };
 
 
     public Device getDev() {
-        Device dd = null;
         for (Device d : list) {
             if (d.isState()) {
-                dd = d;
+                return d;
             }
         }
-        return dd;
+        return new Device();
     }
 
 

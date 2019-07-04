@@ -235,4 +235,21 @@ public class SQLite extends SQLiteOpenHelper {
             + COL_n + " TEXT,"
             + COL_addr + " TEXT);";
 
+
+    /*   2 tables
+
+    BarCode table : Recording user input information
+           ID : AUTOINCREMENT primary key
+           Barcode : barcode 13
+           Weight :  Protect weight
+           time : Recode time( = input time)
+
+    BTRecord table : Recording connect BlueDevice record
+           ID : AUTOINCREMENT primary key
+           Name : BlueDevice Name
+           Address : BlueDevice MAC address
+
+
+     */
+
 }

@@ -1,5 +1,6 @@
 package com.example.scalebluetooth;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.excell_ble_api.Excell_BLE;
 import com.example.scalebluetooth.Adapter.BTDAdapter;
 import com.example.scalebluetooth.Adapter.BTRAdapter;
+import com.example.scalebluetooth.BlueTooth.AlterDiagram;
+import com.example.scalebluetooth.BlueTooth.BlueToothManagers;
 
 public class BlueToothSetActivity extends AppCompatActivity {
     private Excell_BLE BLE;
@@ -27,7 +31,7 @@ public class BlueToothSetActivity extends AppCompatActivity {
 
         BLE = new Excell_BLE(this);
 
-        adapterD = new BTDAdapter(this,BLE);
+       adapterD = new BTDAdapter(this,BLE);
         adapterR = new BTRAdapter(this,BLE);
 
 
@@ -39,13 +43,20 @@ public class BlueToothSetActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        ((ListView)findViewById(R.id.finbt)).setAdapter(adapterD);
+       ((ListView)findViewById(R.id.finbt)).setAdapter(adapterD);
         ((ListView)findViewById(R.id.storebt)).setAdapter(adapterR);
+
+        if(!BlueToothManagers.isOPen(this)){
+            new AlterDiagram(this).showDialog("GPS 開啟通知","需開啟定位才能設定藍芽裝置","馬上設定開啟","現在不要",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    BlueToothManagers.openGPS(BlueToothSetActivity.this);
+                }
+            });
+        }
 
         adapterD.startSCane(adapterR);
 
-
-        // manager.dectetDevice(((ListView)findViewById(R.id.finbt)),((ListView)findViewById(R.id.storebt)));
     }
 
 
@@ -66,17 +77,23 @@ public class BlueToothSetActivity extends AppCompatActivity {
 
 
     public void backToMain(){
+        Intent intent;
+        intent = new Intent();
+
         try{
             BLE.Disconnect_Device();
+            intent.putExtra("device",  adapterR.getDev());
+            startActivity(intent);
+
         }catch (Exception ex){
             ex.printStackTrace();
-        }
+            intent = new Intent();
+        }finally {
+            intent.setClass(this,MainActivity.class);
+            startActivity(intent);
 
-        Intent intent = new Intent();
-        intent.putExtra("device",  adapterR.getDev());
-        intent.setClass(this,MainActivity.class);
-        startActivity(intent);
-        finish();
+            finish();
+        }
     }
 
 

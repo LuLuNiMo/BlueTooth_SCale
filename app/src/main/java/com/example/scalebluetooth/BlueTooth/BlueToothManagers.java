@@ -3,14 +3,19 @@ package com.example.scalebluetooth.BlueTooth;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.TextView;
@@ -49,18 +54,37 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
         return adapter.isEnabled();
     }
 
-    public boolean getLocalR() {
-        if (Build.VERSION.SDK_INT >= 6.0) {
+    public boolean getLocalR() { //定位權限 (Android 6.0 以上使用藍芽功能(搜尋裝置)時需有此權限)
+        if (Build.VERSION.SDK_INT >= 23) { //API
             return ((ActivityCompat.checkSelfPermission(a, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     && (ActivityCompat.checkSelfPermission(a, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             );
         } else {
             return true;
         }
-
     }
 
-    public void Request() {
+    public static final void openGPS(Activity a) {
+       final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+       a.startActivity(intent);
+    }
+
+
+    public static final boolean isOPen(final Context context) {
+        LocationManager locationManager
+                = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        // 通過GPS衛星定位，定位級別可以精確到街（通過24顆衛星定位，在室外和空曠的地方定位准確、速度快）
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 通過WLAN或移動網絡(3G/2G)確定的位置（也稱作AGPS，輔助GPS定位。主要用於在室內或遮蓋物（建築群或茂密的深林等）密集的地方定位）
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps || network) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public void Request() { //要求權限(定位+藍芽存取)
         if (!adapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             a.startActivityForResult(enableIntent, 0);
@@ -89,6 +113,8 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
         this.device = d;
 
 
+
+
         list = (ArrayList<Device>) SQLite.getInstance(a).selectR(null, null);
         BLE.Setup_Scale("General");
         BLE.Start_Scan();
@@ -99,20 +125,37 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
     public void OnScan_Result(BluetoothDevice arg0) {
         state.setText("連接中");
         state.setTextColor(Color.DKGRAY);
-        if (device != null) {
-            if (device.getAddr().equals(arg0.getAddress())) {
-                BLE.Stop_Scan();
-                BLE.Connect_Device(arg0);
-                device.setDevice(arg0);
-            }
-        } else {
-            for (Device d : list) {
-                if (d.getAddr().equals(arg0.getAddress())) {
-                    device = new Device(arg0.getName(), arg0.getAddress(), arg0, true);
-                    BLE.Stop_Scan();
-                    BLE.Connect_Device(arg0);
-                }
-            }
+        boolean check =true;
+
+
+        try{
+           if(device != null){
+               if (!device.getAddr().equals("")) { //手動優先選擇
+                   if (device.getAddr().equals(arg0.getAddress())) {
+                       BLE.Stop_Scan();
+                       BLE.Connect_Device(arg0);
+                       device.setDevice(arg0);
+                       check = false;
+                   }else{
+
+                   }
+           }
+
+            } //自動選擇
+              if(check){
+                  for (Device d : list) {
+                      if (d.getAddr().equals(arg0.getAddress())) {
+                          device = new Device(arg0.getName(), arg0.getAddress(), arg0, true);
+                          BLE.Stop_Scan();
+                          BLE.Connect_Device(arg0);
+                      }
+                  }
+              }
+
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            Log.e("OnScan_Result_ERROR",ex.getMessage());
         }
 
 
@@ -146,11 +189,11 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
                             }
                             state.setText("已連接");
                             state.setTextColor(Color.BLUE);
-                            Log.d("Scale State--", "BLE Scale is Connected");
+                            Log.e("Scale State--", "BLE Scale is Connected");
                             break;
                         case 0:
                         default:
-                            Log.d("Scale State--", "BLE Scale Disconnect");
+                            Log.e("Scale State--", "BLE Scale Disconnect");
                             state.setText("連接失敗");
                             w.setText("0.00 kg");
                             state.setTextColor(Color.RED);

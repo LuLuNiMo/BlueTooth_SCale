@@ -85,7 +85,7 @@ public class ExcelFormat {
             sheet.addCell((WritableCell) new Label(0, 0, fileName, format14)); //建立標題欄
 
             for (int col = 0; col < colName.length; col++) {
-                sheet.addCell(new Label(col, 0, colName[col], format12));
+                sheet.addCell(new Label(col, 0, colName[col], format12)); //輸入標題欄之值
             }
 
             sheet.setRowView(0, 340); //設定行高
@@ -127,9 +127,9 @@ public class ExcelFormat {
                 in = new FileInputStream(new File(fileName));
                 book = Workbook.getWorkbook(in);
                 writebook = Workbook.createWorkbook(new File(fileName), book);
-                sheet = writebook.getSheet(0);
+                sheet = writebook.getSheet(0); //每次整個修改
 
-                for (int i = 0; i < objList.size(); i++) {
+                for (int i = 0; i < objList.size(); i++) { //單筆插入 一筆 record
                     ArrayList<String> list = objList.get(i);
 
                     for (int j = 0; j < list.size(); j++) {

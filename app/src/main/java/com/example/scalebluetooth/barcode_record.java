@@ -44,10 +44,6 @@ public class barcode_record extends AppCompatActivity {
     }
 
 
-
-
-
-
     public void initSet(){
         text = (EditText) findViewById(R.id.text);
         unit = (TextView) findViewById(R.id.unit);
@@ -118,7 +114,7 @@ public class barcode_record extends AppCompatActivity {
                 if(adapter.getItems().size() < 1 || adapter.getItems().isEmpty()){
                     Toast.makeText(this,"無資料",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(manager.permission(this)){
+                    if(!manager.permission(this)){
                         manager.ExportExcel(this,adapter.getItems());
                         new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
                     }else{

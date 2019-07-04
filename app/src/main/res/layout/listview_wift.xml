@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    style="@style/LinearLayout_Style"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -13,8 +14,9 @@
             android:id="@+id/state"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_weight="0"
             android:background="@drawable/ischecked"
-            android:text="" />
+           />
 
         <LinearLayout
             android:id="@+id/bt"
@@ -62,9 +64,16 @@
 
             <Button
                 android:id="@+id/button"
+                style="@style/Context_Text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="連接裝置" />
+                android:layout_height="35dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/btnstyle"
+                android:text="連接裝置"
+                android:textSize="16sp" />
 
 
         </LinearLayout>

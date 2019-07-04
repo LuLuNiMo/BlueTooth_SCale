@@ -68,13 +68,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new BCAdapter(this);
         ((ListView) findViewById(R.id.listview)).setAdapter(adapter);
         device = (Device) (getIntent().getSerializableExtra("device"));
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (manager.getBTs() && manager.getLocalR()) {
-            isBT = true;}
+            isBT = true;
+        }
         handler.postDelayed(BT_state, 1000);
     }
 
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // main Method
 
     public void connect_device() {
-        manager.ConnectDevices(name, state,weigth,device);
+        manager.ConnectDevices(name, state, weigth, device);
     }
 
     public void dectet_weigth() {
@@ -107,23 +109,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
     }
-
-
 
 
     //File Write and location Perrmission
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
-        switch (requestCode){
+        switch (requestCode) {
             case 0:
                 if (manager.getBTs() && manager.getLocalR()) {
                     isBT = true;
                 } else {
-                    Toast.makeText(this,"尚未開放藍芽權限",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "尚未開放藍芽權限", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case 1:
@@ -132,11 +132,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 } else {
                     EM.ExportExcel(MainActivity.this, adapter.getList());
-                    new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
+                    new AlterDiagram(this).showDialog("匯出至......", new String[]{"手機", "其他"});
                 }
                 break;
         }
-
 
 
     }
@@ -146,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.c_dev:
                 if (manager.getBTs() && manager.getLocalR()) {
-                    if(SQLite.getInstance(this).selectR(null,null).isEmpty()){
-                        Toast.makeText(this,"尚未設定藍芽",Toast.LENGTH_SHORT).show();
-                    }else{
+                    if (SQLite.getInstance(this).selectR(null, null).isEmpty()) {
+                        Toast.makeText(this, "無資料", Toast.LENGTH_SHORT).show();
+                    } else {
                         connect_device();
                     }
                 } else {
@@ -173,11 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (EM.permission(MainActivity.this)) {
                     EM.Requset_permission(MainActivity.this);
                 } else {
-                    if(adapter.getList().isEmpty() || adapter.getList().size() < 1){
-                        Toast.makeText(this,"無資料", Toast.LENGTH_SHORT).show();
-                    }else{
+                    if (adapter.getList().isEmpty() || adapter.getList().size() < 1) {
+                        Toast.makeText(this, "無資料", Toast.LENGTH_SHORT).show();
+                    } else {
                         EM.ExportExcel(MainActivity.this, adapter.getList());
-                        new AlterDiagram(this).showDialog("匯出至......",new String[]{"手機","其他"});
+                        new AlterDiagram(this).showDialog("匯出至......", new String[]{"手機", "其他"});
                     }
                 }
 
@@ -238,12 +237,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.btC:
-                if(isBT){
+                if (isBT) {
                     manager.close();
                     intent.setClass(this, BlueToothSetActivity.class);
                     startActivity(intent);
                     finish();
-                }else{
+                } else {
                     manager.Request();
                 }
 
@@ -253,15 +252,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
-        try{
-            manager.close();
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
+        manager.close();
     }
+
+
 
 }
 

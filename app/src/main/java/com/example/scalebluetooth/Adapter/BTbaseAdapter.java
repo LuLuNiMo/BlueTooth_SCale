@@ -48,30 +48,25 @@ public abstract class BTbaseAdapter extends BaseAdapter implements Excell_BLE.Li
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        LayoutInflater mInflater = (LayoutInflater) activity.getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);  //LayoutInflater.from(context);
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.listview_wift, parent, false);
-        }
+        View view =
+                LayoutInflater.from(activity).inflate(
+                        R.layout.listview_wift, null);
 
         final Device device = list.get(position);
 
-        TextView name = (TextView) convertView
+        TextView name = (TextView) view
                 .findViewById(R.id.name);
 
-        TextView addr = (TextView) convertView
+        TextView addr = (TextView) view
                 .findViewById(R.id.address);
 
-        LinearLayout bt = (LinearLayout) convertView
-                .findViewById(R.id.bt);
-
-
-        Button b = (Button) convertView
+        Button b = (Button) view
                 .findViewById(R.id.button);
 
-        Button s = (Button) convertView
-                .findViewById(R.id.state);
+       Button s = (Button) view
+               .findViewById(R.id.state);
 
-        final Button del = (Button) convertView
+        final Button del = (Button) view
                 .findViewById(R.id.del);
 
         if(show){
@@ -88,12 +83,13 @@ public abstract class BTbaseAdapter extends BaseAdapter implements Excell_BLE.Li
             }
         });
 
-        if(device.isState() && show){
-            s.setVisibility(View.VISIBLE);
-            s.setLayoutParams(getLayoutParams(90,90));
+        if(device.isState() && show){ //
+            
+         s.setVisibility(View.VISIBLE);
+           s.setLayoutParams(getLayoutParams(90,90));
         }else{
-            s.setVisibility(View.INVISIBLE);
-            s.setLayoutParams(getLayoutParams(0,0));
+           s.setVisibility(View.INVISIBLE);
+          s.setLayoutParams(getLayoutParams(0,0));
         }
 
         b.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +102,7 @@ public abstract class BTbaseAdapter extends BaseAdapter implements Excell_BLE.Li
         name.setText(wifi_name(device.getName()));
         addr.setText(device.getAddr());
 
-        return convertView;
+        return view;
     }
 
 
@@ -134,10 +130,10 @@ public abstract class BTbaseAdapter extends BaseAdapter implements Excell_BLE.Li
             }
         }
 
-        if(check){
-            Device device = new Device(bd.getName(),bd.getAddress(),bd,false);
-            list.add(device);
-            this.notifyDataSetChanged();
+        if(check && bd != null){
+           Device device = new Device(bd.getName(),bd.getAddress(),bd,false);
+           list.add(device);
+           this.notifyDataSetChanged();
         }
     }
 
@@ -145,9 +141,6 @@ public abstract class BTbaseAdapter extends BaseAdapter implements Excell_BLE.Li
     abstract void btnMethod(int position);
 
     abstract void delete(int position);
-
-
-
 
 
 
