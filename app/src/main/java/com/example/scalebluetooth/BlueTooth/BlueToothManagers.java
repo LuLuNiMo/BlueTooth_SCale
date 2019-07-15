@@ -113,8 +113,6 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
         this.device = d;
 
 
-
-
         list = (ArrayList<Device>) SQLite.getInstance(a).selectR(null, null);
         BLE.Setup_Scale("General");
         BLE.Start_Scan();
@@ -136,8 +134,6 @@ public class BlueToothManagers implements Excell_BLE.ListenAPI {
                        BLE.Connect_Device(arg0);
                        device.setDevice(arg0);
                        check = false;
-                   }else{
-
                    }
            }
 

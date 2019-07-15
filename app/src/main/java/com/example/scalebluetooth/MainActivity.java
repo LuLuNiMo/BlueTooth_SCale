@@ -1,9 +1,11 @@
 package com.example.scalebluetooth;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +26,8 @@ import com.example.scalebluetooth.BlueTooth.BlueToothManagers;
 import com.example.scalebluetooth.DB.Device;
 import com.example.scalebluetooth.DB.SQLite;
 import com.example.scalebluetooth.File.ExcelManager;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView name, weigth, state;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Button) findViewById(R.id.wbtn)).setOnClickListener(this);
         ((Button) findViewById(R.id.output)).setOnClickListener(this);
         ((Button) findViewById(R.id.del)).setOnClickListener(this);
+        ((Button) findViewById(R.id.audio)).setOnClickListener(this);
 
 
         manager = new BlueToothManagers(this);
@@ -88,14 +93,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void dectet_weigth() {
-        if (code.getText().length() == 13) {
+        if (code.getText().length() <= 13) { //條碼長度限制
             adapter.add(code.getText().toString(), weigth.getText().toString());
             Toast.makeText(this, "新增成功", Toast.LENGTH_SHORT).show();
             if (!type) {
                 code.setText("");
             }
+            code.setError(null,null);
         } else {
             Toast.makeText(this, "長度不符", Toast.LENGTH_SHORT).show();
+            code.setError("長度需介於0~13");
             code.setText("");
         }
     }
@@ -104,12 +111,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //BT Permission response
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (manager.getBTs() && manager.getLocalR()) {
-            isBT = true;
-        } else {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case 0:
+                if (manager.getBTs() && manager.getLocalR()) {
+                    isBT = true;
+                } else {
+                    ActivityCompat.requestPermissions(
+                            this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+                }
+                break;
+            case 1:
+                if(resultCode == RESULT_OK && data != null){
+                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    String str = result.get(0).replace(" ","");
+
+                    if(str.matches("^[a-zA-Z0-9|\\-]*")){
+                        code.setText(result.get(0).replace(" ",""));
+                        code.setSelection(code.getText().toString().length());
+                    }else{
+                        Toast.makeText(this,"不能輸入中文字",Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }
+                break;
         }
     }
 
@@ -183,6 +212,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.del:
                 adapter.deleteAll();
+                break;
+            case R.id.audio:
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說...");
+                try{
+                    startActivityForResult(intent,1);
+                }catch (ActivityNotFoundException a){
+                    Toast.makeText(this,"語言辨識功能異常...", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
         }
     }
