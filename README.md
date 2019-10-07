@@ -1,7 +1,7 @@
 # BlueTooth 英展磅秤擴充
 
-*適用於Android 6.0 ~8.0
-*輸入資料並透過藍芽連接磅秤
+- 適用於Android 6.0 ~8.0
+- 輸入資料並透過藍芽連接磅秤
 
 ## 資料
 - SQLLite  (KS_Scale_DB)
